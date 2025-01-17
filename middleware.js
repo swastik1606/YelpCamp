@@ -63,32 +63,19 @@ const extension = (joi) => ({
 
 const joi = BaseJoi.extend(extension)
 
-const validate= (req,res,next)=>{
-    const campgroundSchema=joi.object({
-        campground:joi.object({title:joi.string().required().escapeHTML(),
-            location:joi.string().required().escapeHTML(),
-            price:joi.number().required().min(0),
-            // image:joi.string().required(),
-            description:joi.string().required(),}).required().escapeHTML(),
-            deleteImage:joi.array()
+const validate = (req,res,next)=>{
+    const campgroundSchema = joi.object({
+        campground: joi.object({
+            title: joi.string().required().escapeHTML(),
+            location: joi.string().required().escapeHTML(),
+            price: joi.number().required().min(0),
+            description: joi.string().required().escapeHTML(),
+        }).required(), 
+        deleteImage: joi.array()
     })
-    const {error}=campgroundSchema.validate(req.body)
+    const {error} = campgroundSchema.validate(req.body)
     if(error){
-        const msg=error.details.map(el=>el.message).join(',')
-        throw new ExpressError(msg,400)
-    } else{
-        next()
-    }
-}
-
-const reviewValidate= (req,res,next)=>{
-    const reviewSchema=joi.object({
-        review:joi.object({body:joi.string().required().escapeHTML(),
-            rating:joi.number().required()}).required() 
-    })
-    const {error}=reviewSchema.validate(req.body)
-    if(error){
-        const msg=error.details.map(el=>el.message).join(',')
+        const msg = error.details.map(el=>el.message).join(',')
         throw new ExpressError(msg,400)
     } else{
         next()
