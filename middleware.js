@@ -67,7 +67,7 @@ const validate= (req,res,next)=>{
     const campgroundSchema=joi.object({
         campground:joi.object({title:joi.string().required().escapeHTML(),
             location:joi.string().required().escapeHTML(),
-            price:joi.number().required().min(0).escapeHTML(),
+            price:joi.number().required().min(0),
             // image:joi.string().required(),
             description:joi.string().required(),}).required().escapeHTML(),
             deleteImage:joi.array()
