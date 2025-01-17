@@ -1,0 +1,63 @@
+<%layout('layouts/boilerplate.ejs')%>
+
+
+    <div class="new-main">
+        <h1 class="newTitle"><%=foundCamp.title%></h1>
+        <form action="/campgrounds/<%=foundCamp._id%>?_method=PUT" method="post" class="newForm" enctype="multipart/form-data"> 
+
+            <label for="title">Update Title</label>
+            <input type="text" name="campground[title]" id="title" placeholder="Title" value="<%=foundCamp.title%>">
+            <div class="lookGood">Looks Good!</div>
+
+            <label for="price">Update Price</label>
+            <input type="number" name="campground[price]" id="price" placeholder="$Price" value="<%=foundCamp.price%>">
+            <div class="lookGood">Looks Good!</div>
+
+            <label for="location">Update Location</label>
+            <input type="text" name="campground[location]" id="location" placeholder="Location" value="<%=foundCamp.location%>">
+            <div class="lookGood">Looks Good!</div>
+
+            <label for="description">Update Description</label>
+            <input type="text" name="campground[description]" id="description" placeholder="Description" value="<%=foundCamp.description%>">
+            <div class="lookGood">Looks Good!</div>
+            
+            <label for="image" class="custom-file-upload">Add New Images</label>
+            <input type="file" name="image" id="image" multiple>
+            <div id="fileList"></div>
+            <div class="existingImgs">
+                <% foundCamp.image.forEach(function (img,i){ %>
+                    <img src="<%=img.url%>" style="width: 200px; height: auto; margin: 5px;">
+                    <input type="checkbox" id="image-<%=i%>" name="deleteImage[]" value="<%=img.filename%>">
+                    <label for="image-<%=i%>">Delete?</label>
+                <% }) %>
+            </div>
+
+
+            <button>Edit Campground!</button>
+        </form>
+        <div class="new-btn">
+            <a href="/campgrounds/<%=foundCamp._id%>"><button>GO BACK!</button></a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('image').addEventListener('change', function(event) {
+        const fileList = event.target.files;
+        const fileListContainer = document.getElementById('fileList');
+        fileListContainer.innerHTML = ''; // Clear previous file list
+
+        if (fileList.length > 0) {
+            const fileNames = Array.from(fileList).map(file => file.name);
+            fileNames.forEach(fileName => {
+                const fileItem = document.createElement('div');
+                fileItem.classList.add('selected-file');
+                fileItem.textContent = fileName;
+                fileListContainer.appendChild(fileItem);
+            });
+        } else {
+            fileListContainer.textContent = 'No files selected.';
+        }
+        });
+    </script>
+    
+    <script src="/js/new.js"></script>

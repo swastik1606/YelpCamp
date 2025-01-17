@@ -1,0 +1,57 @@
+<%layout('layouts/boilerplate.ejs')%>
+
+
+    <div class="new-main">
+        <img src="https://images.unsplash.com/photo-1625371002560-da816ae07fac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+        <h1 class="newTitle">Add a campground</h1>
+        <form action="/campgrounds" method="post" class="newForm" novalidate enctype="multipart/form-data">
+
+            <label for="title">Enter Title</label>
+            <input type="text" name="campground[title]" id="title" placeholder="Title" required>
+            <div class="lookGood">Looks Good!</div>
+
+            <label for="price">Enter Price</label>
+            <input type="number" name="campground[price]" id="price" placeholder="$Price" required>
+            <div class="lookGood">Looks Good!</div>
+
+            <label for="location">Enter Location</label>
+            <input type="text" name="campground[location]" id="location" placeholder="Location" required>
+            <div class="lookGood" >Looks Good!</div>
+
+            <label for="image" class="custom-file-upload">Add Images</label>
+            <input type="file" name="image" id="image" multiple>
+            <div id="fileList"></div>
+
+            <!-- <label for="image">Enter Image Url</label>
+            <input type="text" name="campground[image]" id="image" placeholder="Image Url"required>
+            <div class="lookGood">Looks Good!</div>  -->
+
+            <label for="description" style="margin-top: 20px;">Enter Description</label>
+            <textarea name="campground[description]" id="description" placeholder="Description" required></textarea>
+            <div class="lookGood">Looks Good!</div>
+
+            <button type="submit">Create Campground!</button>
+
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('image').addEventListener('change', function(event) {
+        const fileList = event.target.files;
+        const fileListContainer = document.getElementById('fileList');
+        fileListContainer.innerHTML = ''; // Clear previous file list
+
+        if (fileList.length > 0) {
+            const fileNames = Array.from(fileList).map(file => file.name);
+            fileNames.forEach(fileName => {
+                const fileItem = document.createElement('div');
+                fileItem.classList.add('selected-file');
+                fileItem.textContent = fileName;
+                fileListContainer.appendChild(fileItem);
+            });
+        } else {
+            fileListContainer.textContent = 'No files selected.';
+        }
+        });
+    </script>
+    <script src="/js/new.js"></script>

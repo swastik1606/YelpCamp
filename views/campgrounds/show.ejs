@@ -1,0 +1,114 @@
+<%layout('layouts/boilerplate.ejs')%>
+<link rel="stylesheet" href="/styles/stars.css">
+<link rel="stylesheet" href="/styles/carousel.css">
+
+<main class="show-main">
+    <div class="show-container">
+        <div class="show">
+            <div class="carousel">
+                <div class="carousel-track">              
+                    <% for (let img of foundCamp.image) { %>
+                        <img src="<%= img.url %>" class="carousel-img" alt="Campground Image">
+                      <% } %>
+                </div>
+                <button class="carousel-btn prev">←</button>
+                <button class="carousel-btn next">→</button>
+            </div>
+            <h1 class="title"> <%=foundCamp.title%> </h1>
+            <h2 class="description"><%=foundCamp.description%> </h2>
+            <h2 class="location"><%=foundCamp.location%> </h2>
+            <h2 class="author">By: <%=foundCamp.author ? foundCamp.author.username :'Unknown'%> </h2>
+            <h2 class="price" style="color: green;">$ <%=foundCamp.price%> </h2>
+
+            <% if(currentUser && foundCamp.author.equals(currentUser._id)) {%>
+                <div class="buttons-container">
+                    <form action="/campgrounds/<%=foundCamp._id%>?_method=DELETE" method="post" class="delete-btn">
+                        <button>Delete</button>
+                    </form>
+                    <a href="/campgrounds/<%=foundCamp._id%>/edit"><button class="edit-btn">Edit</button></a>
+                </div>
+            <% } %>
+
+        </div>
+        
+
+        
+
+    </div>
+
+    <div class="review-div">
+        <!-- Review submission form -->
+        <div id='map' style='width: 605px; height: 300px; margin-top: 2px;'></div>
+         <% if(currentUser) {%>
+            <form action="/campgrounds/<%=foundCamp._id%>/reviews" class='review-form' method="POST" novalidate>
+                
+                <h1>Leave a Review!</h1>
+                <fieldset class="starability-checkmark">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                    <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                    <label for="first-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                    <label for="first-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                    <label for="first-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                    <label for="first-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                    <label for="first-rate5" title="Amazing">5 stars</label>
+                  </fieldset>
+                <textarea id="review-text" name="review[body]" placeholder="Review Text" required></textarea>
+                <div class="lookGood">Looks Good!</div>
+                <button class="submit-btn" type="submit">Submit!</button>
+            </form>
+
+        <% } %>
+        <!-- Reviews display section -->
+         <% if (foundCamp.reviews.length>0) {%>
+        <div class="all-reviews" style="margin-top: 35px;">
+            <h1 class="review-h1">All Reviews</h1>
+            <% foundCamp.reviews.forEach(review => { %>
+                <div class="review-show">
+                    <p class="review-leaver"><%=review.author.username%></p>
+                    <p class="starability-result" data-rating="<%=review.rating%>">
+                      Rated: 3 stars
+                    </p>
+
+                    <p class="review-text">Review: <%=review.body%></p>
+                    <% if(currentUser && review.author.equals(currentUser._id)) {%>
+                    <form class="review-delete-form" method="POST" action="/campgrounds/<%=foundCamp._id%>/reviews/<%=review._id%>?_method=DELETE">
+                        <button type="submit">Delete</button>
+                    </form>
+                    <% } %>
+                </div>
+            <% }) %>
+        </div>
+        <% } %>
+    </div>
+</main>
+
+<script>
+
+    (() => {
+        const camp = <%- JSON.stringify(foundCamp) %>; 
+        mapboxgl.accessToken = '<%-process.env.mapbox_token%>';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/light-v10',
+            center: camp.geometry.coordinates,
+            zoom: 12
+        });
+
+        new mapboxgl.Marker()
+            .setLngLat(camp.geometry.coordinates)
+            .setPopup(
+                new mapboxgl.Popup({offset:25})
+                .setHTML(
+                    `<h3>${camp.title}</h3><p>${camp.location}</p>`
+                )
+            )
+            .addTo(map);
+    })();
+</script>
+
+<script src="/js/carousel.js"></script>
+<script src="/js/review.js"></script>

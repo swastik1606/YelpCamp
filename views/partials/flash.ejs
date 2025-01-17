@@ -1,0 +1,19 @@
+<div class="success-container">
+<% if (success && success.length) {%>
+    <div class="success-msg-div">
+        <%=success%>
+        <i class="fa-solid fa-x" id="suc-dismiss"></i>
+    </div>
+<% } %>
+</div>
+
+<div class="error-container">
+    <% if (error && error.length) {%>
+        <div class="error-msg-div">
+            <%=error%>
+            <i class="fa-solid fa-x" id="err-dismiss"></i>
+        </div>
+    <% } %>
+</div>
+
+<script src="/js/dismiss.js"></script>

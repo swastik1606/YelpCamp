@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="/styles/home.css">
+<nav class="home-nav">
+    <li class="branding">YelpCamp</li>
+    <ul class="user-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/campgrounds">Campgrounds</a></li>
+        <% if(!currentUser) {%>
+       <li class="login"><a href='/login'>Login</a></li> 
+       <li class="reg"><a href='/register'>Register</a></li>
+       <% } else if(currentUser){ %>
+       <li class="logout"><a href='/logout'>Logout</a></li>
+       <% } %> 
+    </ul>
+</nav>
+    <main class="home-main">
+        <h1 class="home-h1">YelpCamp</h1>
+        <p>Welcome to YelpCamp! <br> Jump right in and explore our many campgrounds,
+        Feel free to leave your comments along the way.</p>
+        <a href="/campgrounds" class="main-btn">View Campgrounds</a>
+    </main>
