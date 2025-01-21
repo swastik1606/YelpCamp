@@ -9,8 +9,8 @@
 <div class="card-container">
     <%for(let campground of campgrounds) {%>
         <div class="card">
-            <% if (campground.images && campground.images.length > 0) { %>
-                <img crossorigin="anonymous" src="<%=campground.images[0].url%>" class="card-img" alt="campground">
+            <% if (campground.image && campground.image.length > 0) { %>
+                <img crossorigin="anonymous" src="<%=campground.image[0].url%>" class="card-img" alt="campground">
             <% } else { %>
                 <img src="https://www.appletonmn.com/vertical/Sites/%7B4405B7C1-A469-4999-9BC5-EC3962355392%7D/uploads/campground_(2).jpg" class="card-img" alt="campground">
             <% } %>
