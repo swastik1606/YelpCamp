@@ -1,58 +1,65 @@
-const mongoose=require('mongoose')
-const {Schema}= mongoose
-const Review=require("./reviews.js");
-const { required } = require('joi');
+// Import required modules
+const mongoose = require('mongoose'); // Mongoose for MongoDB interaction
+const { Schema } = mongoose; // Destructure Schema for creating schemas
+const Review = require("./reviews.js"); // Import the Review model
+const { required } = require('joi'); // Joi for validation (not used here but imported)
 
-const opts={toJSON:{virtuals:true}}
+// Options for the schema to include virtuals in JSON output
+const opts = { toJSON: { virtuals: true } };
 
-const campSchema= new Schema({
-    title:String,
-    image:[
+// Define the schema for a Campground
+const campSchema = new Schema({
+    title: String, // Title of the campground
+    image: [ // Array of image objects
         {
-        url:String,
-        filename:String
+            url: String, // URL of the image
+            filename: String // Filename of the image
         }
     ],
-    geometry:{
-        type:{
-            type:String,
-            enum:['Point'],
-            required:true
+    geometry: { // Geolocation data for the campground
+        type: { 
+            type: String, // Type of geometry, must be 'Point'
+            enum: ['Point'], // Enforce geometry type to 'Point'
+            required: true // Make this field mandatory
         },
-        coordinates:{
-            type:[Number],
-            required:true
+        coordinates: {
+            type: [Number], // Array of numbers representing [longitude, latitude]
+            required: true // Make this field mandatory
         }
     },
-    price:Number,
-    location:String,
-    description:String,
-    author:{
-        type:Schema.Types.ObjectId,
-        ref:'User'
+    price: Number, // Price of the campground
+    location: String, // Location of the campground
+    description: String, // Description of the campground
+    author: { // Reference to the user who created the campground
+        type: Schema.Types.ObjectId, // ObjectId referencing the User model
+        ref: 'User'
     },
-    reviews:[
+    reviews: [ // Array of references to reviews associated with the campground
         {
-            type:Schema.Types.ObjectId,
-            ref:'Review'
+            type: Schema.Types.ObjectId, // ObjectId referencing the Review model
+            ref: 'Review'
         }
-    ],
-},opts);
+    ]
+}, opts); // Include options to allow virtuals in JSON output
 
-campSchema.virtual('properties.popUpMarkup').get(function(){
-    return `<a href='/campgrounds/${this._id}'>${this.title}</a><p>${this.location}</p><p>$${this.price}</p>`
-})
+// Virtual property for creating popup markup (used in maps or UI)
+campSchema.virtual('properties.popUpMarkup').get(function () {
+    return `<a href='/campgrounds/${this._id}'>${this.title}</a><p>${this.location}</p><p>$${this.price}</p>`;
+});
 
-campSchema.post('findOneAndDelete', async function (doc){
-    if(doc){
-        await Review.deleteMany({
+// Middleware to clean up associated reviews after a campground is deleted
+campSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) { // If a document (campground) is found and deleted
+        await Review.deleteMany({ // Delete all reviews associated with the campground
             _id: {
-                $in: doc.reviews
+                $in: doc.reviews // Match reviews whose IDs are in the campground's reviews array
             }
-        })
+        });
     }
-})
+});
 
+// Create the Campground model using the schema
+const campground = mongoose.model('Campground', campSchema);
 
-const campground= mongoose.model('Campground',campSchema)
-module.exports=campground
+// Export the Campground model for use in other parts of the application
+module.exports = campground;
